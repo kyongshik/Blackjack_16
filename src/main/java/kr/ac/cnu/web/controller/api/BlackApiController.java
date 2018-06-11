@@ -7,6 +7,7 @@ import kr.ac.cnu.web.model.User;
 import kr.ac.cnu.web.repository.UserRepository;
 import kr.ac.cnu.web.service.BlackjackService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -76,7 +77,11 @@ public class BlackApiController {
     public GameRoom stand(@RequestHeader("name") String name, @PathVariable String roomId) {
         User user = this.getUserFromSession(name);
 
-        return blackjackService.stand(roomId, user);
+        GameRoom game = blackjackService.stand(roomId,user);
+        long currentBet =blackjackService.getGameRoom(roomId).getPlayerList().get(name).getBalance();
+        user.setAccount(currentBet);
+        userRepository.saveAndFlush(user);
+        return game;
     }
 
     @GetMapping("/rooms/{roomId}")
