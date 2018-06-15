@@ -432,6 +432,7 @@
         </div>
         <div class="clear"></div>
     </div>
+
     <div>
         <b>Available Funds</b><br>
         <span id="money" class="money"></span>
@@ -513,7 +514,21 @@
                 'name':user.name
             },
         }).done(function(data) {
-            drawGameRoom(data);
+            console.log(data.playerList[user.name].hand.cardList.length);
+            if(data.playerList[user.name].hand.cardSum > 21){
+                console.log(data.playerList[user.name].hand.cardSum);
+                    $.ajax({
+                        type: 'POST',
+                        url: 'http://localhost:8080/api/black-jack/rooms/' + gameRoomId + '/stand',
+                        headers: {
+                            'name':user.name
+                        },
+                    }).done(function(data) {
+                        drawGameRoom(data);
+                    });
+            }else {
+                drawGameRoom(data);
+            }
         });
     })
 
@@ -530,7 +545,7 @@
     })
 
     $('#more').click(function(){
-        var bet = 100;
+        var bet = 1000;
         var currentBet = parseInt($('#bet').html());
         var money = parseInt($('#money').html());
         if (money < bet) {
@@ -542,7 +557,7 @@
     });
 
     $('#less').click(function(){
-        var bet = 100;
+        var bet = 1000;
         var currentBet = parseInt($('#bet').html());
         var money = parseInt($('#money').html());
         if(currentBet < bet) {
@@ -552,7 +567,6 @@
         $('#bet').html(currentBet - bet);
         $('#money').html(money + bet);
     });
-
     function drawGameRoom(gameRoom) {
         console.log(gameRoom);
         if (gameRoom.finished) {
@@ -590,6 +604,11 @@
 
         $('#bet').html(gameRoom.playerList[user.name].currentBet);
         $('#money').html(gameRoom.playerList[user.name].balance);
+
+        $('#user-name-id').html('');
+        $('#user-name-id').html('<strong>' + user.name+'    '+gameRoom.playerList[user.name].balance+'</strong>');
+
+
     }
 
     function generateCardDiv(rank, suit) {
