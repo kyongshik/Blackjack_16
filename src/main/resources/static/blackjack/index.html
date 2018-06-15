@@ -402,9 +402,42 @@
             color: green;
             font-size: 21px;
         }
+        .user-name{
+            border :2px solid gainsboro;
+            position: fixed;
+            top: 1px;
+            right: 3px;
+            background: azure;
+            width: 250px;
+            height: 48px;
+            display: none;
+            text-align:center;
+        }
+        .player-Ranking {
+            position: fixed;
+            top: 50px;
+            right: 3px;
+            background: azure;
+            border: 2px solid gainsboro;
+            width: 30%;
+            max-width:250px;
+            height: 60%;
+            text-align:center;
+            display: none;
+        }
+        tr{
+            width: 100%;
+        }
+        td{
+            text-align: left;
+            width: 125px;
+            border: none;
+        }
     </style>
 </head>
 <body>
+<div class="player-Ranking" id="Ranking"></div>
+<div class="user-name" id="user-name-id"></div>
 <div class="page" id="login">
     <div>
         <input type="text" id="input_login_name" />
@@ -453,10 +486,12 @@
             url: 'http://localhost:8080/api/black-jack/login',
             data: loginName,
             contentType:'application/json;'
-        }).done(function(data) {
+        }).done(function(data) {    //사용자의 이름과 account를 담은 변수 (data.name,data,account)
             $('#login').hide();
             $('#lobby').show();
             user = data;
+            $('#user-name-id').show();
+            $('#user-name-id').append('<strong>' + user.name +'    '+user.account+ '</strong>');
         });
     });
 
@@ -471,6 +506,8 @@
             $('#login').hide();
             $('#lobby').show();
             user = data;
+            $('#user-name-id').show();
+            $('#user-name-id').append('<strong>' + user.name +'    '+user.account+ '</strong>');
         });
     });
 
@@ -481,18 +518,47 @@
             headers: {
                 'name':user.name
             }
-        }).done(function(data) {
+        }).done(function(data) {    //data는 rooms에서 리턴받은 값이다.
             $('#login').hide();
             $('#lobby').hide();
             $('#game').show();
             gameRoomId = data.roomId;
             drawGameRoom(data);
+            setRanking();
         });
     })
+    function setRanking() {
+            $.ajax({
+                type: 'POST',
+                url: 'http://localhost:8080/api/black-jack/Ranking',
+            }).done(function (data) {
+                var list = new Array();
+                list = data;
+                $('#Ranking').show();
+                $('#Ranking').html('');
+                $('#Ranking').append('Ranking');
+                sortAndPrint(list);
+            });
+    }
+
+    function sortAndPrint(list){
+        list.sort(function(a,b){
+            var value1 = a.account;
+            var value2 = b.account;
+            return value2-value1;
+        })
+        var number;
+        var ol= "<table>";
+        for(var i=0;i<list.length;i++){
+            number=i+1;
+            ol+="<tr><td>"+number+"."+list[i].name+"</td>"+"<td>"+list[i].account+"</td></tr>"
+        }
+        ol += "</table>";
+        $('#Ranking').append(ol);
+    }
 
     $('#deal').click(function() {
         var bet = parseInt($('#bet').html());
-
         $.ajax({
             type: 'POST',
             url: 'http://localhost:8080/api/black-jack/rooms/' + gameRoomId + '/bet',
@@ -502,6 +568,7 @@
             data: JSON.stringify(bet),
             contentType:'application/json;',
         }).done(function(data) {
+
             drawGameRoom(data);
         });
     })
@@ -511,9 +578,10 @@
             type: 'POST',
             url: 'http://localhost:8080/api/black-jack/rooms/' + gameRoomId + '/hit',
             headers: {
-                'name':user.name
+                'name': user.name
             },
         }).done(function(data) {
+
             console.log(data.playerList[user.name].hand.cardList.length);
             if(data.playerList[user.name].hand.cardSum > 21){
                 console.log(data.playerList[user.name].hand.cardSum);
@@ -529,6 +597,10 @@
             }else {
                 drawGameRoom(data);
             }
+
+            drawGameRoom(data); //카드 한장 뽑았으니 화면을 갱신해준다.
+
+
         });
     })
 
@@ -537,10 +609,11 @@
             type: 'POST',
             url: 'http://localhost:8080/api/black-jack/rooms/' + gameRoomId + '/stand',
             headers: {
-                'name':user.name
+                'name':user.name,
             },
-        }).done(function(data) {
+        }).done(function(data) {        //게임에 대한 전반적이 정보를 다 가져온다.
             drawGameRoom(data);
+            setRanking();
         });
     })
 
@@ -568,7 +641,7 @@
         $('#money').html(money + bet);
     });
     function drawGameRoom(gameRoom) {
-        console.log(gameRoom);
+        console.log(gameRoom);  //room에대한정보를 console에 print한다.
         if (gameRoom.finished) {
             $('#deal').show();
             $('#more').show();
@@ -584,23 +657,25 @@
         }
 
         $('.dealer-cards').html("");
-        gameRoom.dealer.hand.cardList.forEach(function(card) {
-            $('.dealer-cards').append(generateCardDiv(card.rank, card.suit));
+
+        gameRoom.dealer.hand.cardList.forEach(function(card) {  //create에서 cardlist에 card가 없어서 호출이 안 된다. deal한 다음은 가능하다.
+            $('.dealer-cards').append(generateCardDiv(card.rank, card.suit));   //dealer위치에 카드하나 배치한다.
         })
-        if (gameRoom.dealer.hand.cardList.length == 1) {
+        if (gameRoom.dealer.hand.cardList.length == 1) {            //dealer카드가 한장이면(물론 처음에 deal할때는 한장이다?) 옆에 는 엎어진 카드 하나 있어어한다.
             $('.dealer-cards').append('<div class="card card2 flipped" data-value="6"></div>');
         }
-        if (gameRoom.dealer.hand.cardList.length > 0) {
+        if (gameRoom.dealer.hand.cardList.length > 0) {                     //dealer 카드 점수합
             $('.dealer-cards').append('<div id="dealerTotal" class="dealer-total">' + gameRoom.dealer.hand.cardSum + '</div>')
         }
 
         $('.player-cards').html("");
-        gameRoom.playerList[user.name].hand.cardList.forEach(function(card) {
+        gameRoom.playerList[user.name].hand.cardList.forEach(function(card) {   //player의 카드를 출력해준다. deal를 했으면 사용자의 카드는 두장이므로 두번호출한다.
             $('.player-cards').append(generateCardDiv(card.rank, card.suit));
         });
-        if (gameRoom.playerList[user.name].hand.cardList.length > 0) {
+        if (gameRoom.playerList[user.name].hand.cardList.length > 0) {      //카드 밑에 있는 점수출력
             $('.player-cards').append('<div id="playerTotal" class="player-total">' + gameRoom.playerList[user.name].hand.cardSum + '</div>')
         }
+
 
         $('#bet').html(gameRoom.playerList[user.name].currentBet);
         $('#money').html(gameRoom.playerList[user.name].balance);
@@ -608,6 +683,12 @@
         $('#user-name-id').html('');
         $('#user-name-id').html('<strong>' + user.name+'    '+gameRoom.playerList[user.name].balance+'</strong>');
 
+
+
+        $('#bet').html(gameRoom.playerList[user.name].currentBet);  //player의 배팅 금액
+        $('#money').html(gameRoom.playerList[user.name].balance);   //player의 모든 금액
+        $('#user-name-id').html('');
+        $('#user-name-id').html('<strong>' + user.name+'    '+gameRoom.playerList[user.name].balance+'</strong>');
 
     }
 

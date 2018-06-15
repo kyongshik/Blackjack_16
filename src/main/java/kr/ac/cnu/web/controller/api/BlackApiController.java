@@ -7,6 +7,7 @@ import kr.ac.cnu.web.model.User;
 import kr.ac.cnu.web.repository.UserRepository;
 import kr.ac.cnu.web.service.BlackjackService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -58,9 +61,17 @@ public class BlackApiController {
         return blackjackService.createGameRoom(user);
     }
 
+    @PostMapping("/Ranking")
+    public List getRanking(){
+        List rankingList = new ArrayList();
+        for(User user : userRepository.findAll())
+            rankingList.add(user);
+        return rankingList;
+    }
+
     @PostMapping(value = "/rooms/{roomId}/bet", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public GameRoom bet(@RequestHeader("name") String name, @PathVariable String roomId, @RequestBody long betMoney) {
-        User user = this.getUserFromSession(name);
+    public GameRoom bet(@RequestHeader("name") String name, @PathVariable String roomId, @RequestBody long betMoney) {  //headers가 name  url 매개변수:roomId  data: betMoney
+        User user = this.getUserFromSession(name);  //user의 name, account
 
         return blackjackService.bet(roomId, user, betMoney);
     }
@@ -76,7 +87,11 @@ public class BlackApiController {
     public GameRoom stand(@RequestHeader("name") String name, @PathVariable String roomId) {
         User user = this.getUserFromSession(name);
 
-        return blackjackService.stand(roomId, user);
+        GameRoom game = blackjackService.stand(roomId,user);
+        long currentBet =blackjackService.getGameRoom(roomId).getPlayerList().get(name).getBalance();
+        user.setAccount(currentBet);
+        userRepository.saveAndFlush(user);
+        return game;
     }
 
     @GetMapping("/rooms/{roomId}")
