@@ -403,19 +403,40 @@
             font-size: 21px;
         }
         .user-name{
+            border :2px solid gainsboro;
             position: fixed;
             top: 1px;
-            left: 3px;
+            right: 3px;
             background: azure;
-            width: 150px;
+            width: 250px;
             height: 48px;
             display: none;
             text-align:center;
         }
+        .player-Ranking {
+            position: fixed;
+            top: 50px;
+            right: 3px;
+            background: azure;
+            border: 2px solid gainsboro;
+            width: 30%;
+            max-width:250px;
+            height: 60%;
+            text-align:center;
+            display: none;
+        }
+        tr{
+            width: 100%;
+        }
+        td{
+            text-align: left;
+            width: 125px;
+            border: none;
+        }
     </style>
 </head>
 <body>
-<body>
+<div class="player-Ranking" id="Ranking"></div>
 <div class="user-name" id="user-name-id"></div>
 <div class="page" id="login">
     <div>
@@ -502,8 +523,38 @@
             $('#game').show();
             gameRoomId = data.roomId;
             drawGameRoom(data);
+            setRanking();
         });
     })
+    function setRanking() {
+            $.ajax({
+                type: 'POST',
+                url: 'http://localhost:8080/api/black-jack/Ranking',
+            }).done(function (data) {
+                var list = new Array();
+                list = data;
+                $('#Ranking').show();
+                $('#Ranking').html('');
+                $('#Ranking').append('Ranking');
+                sortAndPrint(list);
+            });
+    }
+
+    function sortAndPrint(list){
+        list.sort(function(a,b){
+            var value1 = a.account;
+            var value2 = b.account;
+            return value2-value1;
+        })
+        var number;
+        var ol= "<table>";
+        for(var i=0;i<list.length;i++){
+            number=i+1;
+            ol+="<tr><td>"+number+"."+list[i].name+"</td>"+"<td>"+list[i].account+"</td></tr>"
+        }
+        ol += "</table>";
+        $('#Ranking').append(ol);
+    }
 
     $('#deal').click(function() {
         var bet = parseInt($('#bet').html());
@@ -526,7 +577,7 @@
             type: 'POST',
             url: 'http://localhost:8080/api/black-jack/rooms/' + gameRoomId + '/hit',
             headers: {
-                'name':user.name
+                'name': user.name
             },
         }).done(function(data) {
             drawGameRoom(data); //카드 한장 뽑았으니 화면을 갱신해준다.
@@ -543,6 +594,7 @@
             },
         }).done(function(data) {        //게임에 대한 전반적이 정보를 다 가져온다.
             drawGameRoom(data);
+            setRanking();
         });
     })
 

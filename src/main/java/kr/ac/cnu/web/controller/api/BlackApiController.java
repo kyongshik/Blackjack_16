@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -59,9 +61,17 @@ public class BlackApiController {
         return blackjackService.createGameRoom(user);
     }
 
+    @PostMapping("/Ranking")
+    public List getRanking(){
+        List rankingList = new ArrayList();
+        for(User user : userRepository.findAll())
+            rankingList.add(user);
+        return rankingList;
+    }
+
     @PostMapping(value = "/rooms/{roomId}/bet", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public GameRoom bet(@RequestHeader("name") String name, @PathVariable String roomId, @RequestBody long betMoney) {
-        User user = this.getUserFromSession(name);
+    public GameRoom bet(@RequestHeader("name") String name, @PathVariable String roomId, @RequestBody long betMoney) {  //headers가 name  url 매개변수:roomId  data: betMoney
+        User user = this.getUserFromSession(name);  //user의 name, account
 
         return blackjackService.bet(roomId, user, betMoney);
     }
