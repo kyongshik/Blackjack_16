@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
  */
 public class Player {
     @Getter
-    private long balance;
+    private long balance;//잔고
     @Getter
-    private long currentBet;
+    private long currentBet;//배팅한 금액
     @Getter
     private boolean isPlaying;
     @Getter
@@ -31,7 +31,6 @@ public class Player {
 
     public void placeBet(long bet) {
         if(balance < bet) {
-            throw new NotEnoughBalanceException();
         }
         balance -= bet;
         currentBet = bet;
@@ -39,23 +38,32 @@ public class Player {
         isPlaying = true;
     }
 
-    public void deal() {
-        hand.drawCard();
-        hand.drawCard();
+    public void deal() {//맨처음
+        Card first = hand.drawCard();
+        Card second = hand.drawCard();
+        if(first.getRank() + second.getRank() ==21){ //blackjack이면 1.5배를 돌려받아야함
+            balance  += getCurrentBet()*1.5;
+            this.isPlaying=false;
+        }
+        if(first.getRank()+second.getRank() > 21){
+//            currentBet=0;
+            this.isPlaying=false;
+        }
+
     }
 
-    public void win() {
+    public void win() {//이김
         balance += currentBet * 2;
-        currentBet = 0;
+//        currentBet = 0;
     }
 
-    public void tie() {
+    public void tie() {//비김
         balance += currentBet;
-        currentBet = 0;
+//        currentBet = 0;
     }
 
     public void lost() {
-        currentBet = 0;
+//        currentBet = 0;
     }
 
     public Card hitCard() {
@@ -63,6 +71,7 @@ public class Player {
     }
 
     public void stand() {
+
         this.isPlaying = false;
     }
 

@@ -17,6 +17,7 @@ public class Deck {
     private final List<Card> cardList;
 
     public Deck(int number) {
+        System.out.println(number);
         this.number = number;
         this.cardList = new ArrayList<Card>();
         createCards(number);
@@ -36,13 +37,18 @@ public class Deck {
     }
 
     public Card drawCard() {
-        if (cardList.size() == 0) {
+        if (cardList.size() <= 10) {
             // TODO 실제 게임에서 이런 일이 절대로 일어나면 안되겠죠?
             // 그래서 보통 게임에서는 N 장의 카드가 남으면 모든 카드를 합쳐서 다시 셔플 합니다.
             // 코드에 그런 내용이 들어가야 함.
-            throw new NoMoreCardException();
+            System.out.println("shuffle");
+            for(int i=0;i<cardList.size();i++){
+                cardList.remove(i);
+
+            }
+        createCards(1);
         }
-        return cardList.remove(0);
+       return cardList.remove(0);
     }
 
 }

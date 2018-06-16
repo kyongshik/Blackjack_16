@@ -10,19 +10,21 @@ import java.util.List;
  */
 public class Hand {
     private Deck deck;
-    @Getter
-    private List<Card> cardList = new ArrayList<>();
+        @Getter
+        private List<Card> cardList = new ArrayList<>();
 
     public Hand(Deck deck) {
-        this.deck = deck;
-    }
+            this.deck = deck;
+        }
 
-    public Card drawCard() {
-        Card card = deck.drawCard();
+        public Card drawCard() {
+            Card card = deck.drawCard();
         cardList.add(card);
         return card;
     }
     public int getCardSum() {
+
+
 
         return cardList.stream().mapToInt(card -> {
                 int sum;
@@ -33,6 +35,7 @@ public class Hand {
                 }
                 return sum;
         }).sum();
+
     }
 
     public void reset() {
