@@ -22,10 +22,19 @@ public class Hand {
         cardList.add(card);
         return card;
     }
-
     public int getCardSum() {
-        System.out.println(cardList.stream().mapToInt(card -> card.getRank()).sum());
-            return cardList.stream().mapToInt(card -> card.getRank()).sum();
+
+
+
+        return cardList.stream().mapToInt(card -> {
+                int sum;
+                if(card.getRank()>10) {
+                    sum = 10;
+                }else {
+                    sum = card.getRank();
+                }
+                return sum;
+        }).sum();
 
     }
 
