@@ -56,12 +56,24 @@ public class GameRoom {
         this.isFinished = false;
         dealer.deal();
         playerList.forEach((s, player) -> player.deal());
+
     }
 
     public Card hit(String name) {
         Player player = playerList.get(name);
+        Hand hand = player.getHand();
+        Card c = player.hitCard();
 
-        return player.hitCard();
+        int sum = hand.getCardSum()+c.getRank();
+        System.out.println("3: "+sum);
+        if(sum <=21){
+            return player.hitCard();
+        }
+        else{
+            this.isFinished=true;
+            return player.hitCard();
+        }
+
     }
 
     public void stand(String name) {

@@ -31,7 +31,6 @@ public class Player {
 
     public void placeBet(long bet) {
         if(balance < bet) {
-          throw new NotEnoughBalanceException();
         }
         balance -= bet;
         currentBet = bet;
@@ -42,9 +41,12 @@ public class Player {
     public void deal() {//맨처음
         Card first = hand.drawCard();
         Card second = hand.drawCard();
-
         if(first.getRank() + second.getRank() ==21){ //blackjack이면 1.5배를 돌려받아야함
             balance  += getCurrentBet()*1.5;
+            this.isPlaying=false;
+        }
+        if(first.getRank()+second.getRank() > 21){
+            currentBet=0;
             this.isPlaying=false;
         }
 
@@ -62,7 +64,7 @@ public class Player {
 
     public void lost() {
         currentBet = 0;
-    }//파산
+    }
 
     public Card hitCard() {
         return hand.drawCard();
