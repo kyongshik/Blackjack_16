@@ -46,7 +46,7 @@ public class Player {
             this.isPlaying=false;
         }
         if(first.getRank()+second.getRank() > 21){
-            currentBet=0;
+//            currentBet=0;
             this.isPlaying=false;
         }
 
@@ -54,16 +54,16 @@ public class Player {
 
     public void win() {//이김
         balance += currentBet * 2;
-        currentBet = 0;
+//        currentBet = 0;
     }
 
     public void tie() {//비김
         balance += currentBet;
-        currentBet = 0;
+//        currentBet = 0;
     }
 
     public void lost() {
-        currentBet = 0;
+//        currentBet = 0;
     }
 
     public Card hitCard() {
@@ -71,6 +71,7 @@ public class Player {
     }
 
     public void stand() {
+
         this.isPlaying = false;
     }
 

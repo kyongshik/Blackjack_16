@@ -65,7 +65,7 @@ public class GameRoom {
         Card c = player.hitCard();
 
         int sum = hand.getCardSum()+c.getRank();
-        System.out.println("3: "+sum);
+
         if(sum <=21){
             return player.hitCard();
         }
@@ -78,7 +78,6 @@ public class GameRoom {
 
     public void stand(String name) {
         Player player = playerList.get(name);
-
         player.stand();
     }
 
