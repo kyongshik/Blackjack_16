@@ -617,18 +617,45 @@
         });
     })
 
+$('#stand').click(function() {
+        $.ajax({
+            type: 'POST',
+            url: 'http://localhost:8080/api/black-jack/rooms/' + gameRoomId + '/stand',
+            headers: {
+                'name':user.name,
+            },
+        }).done(function(data) {        //게임에 대한 전반적이 정보를 다 가져온다.
+            drawGameRoom(data);
+            setRanking();
+        });
+    })
+var i=0;
     $('#more').click(function(){
         var bet = 1000;
         var currentBet = parseInt($('#bet').html());
-        var money = parseInt($('#money').html());
+        var money = parseInt($('#money').html());//잔고
         if (money < bet) {
             bet = money;
         }
 
-        $('#bet').html(currentBet + bet);
-        $('#money').html(money - bet);
-    });
+        if( (bet+currentBet) >10000 ){
 
+            $('#bet').html(10000);
+            <!--//currentBet=10000;-->
+            if(i==3){
+                $('#money').html(money - 10000);
+                 i=i+1;
+            }
+
+
+        }
+        else{
+
+            $('#bet').html(currentBet + bet);
+            $('#money').html(money - bet);
+        }
+
+    });
     $('#less').click(function(){
         var bet = 1000;
         var currentBet = parseInt($('#bet').html());
