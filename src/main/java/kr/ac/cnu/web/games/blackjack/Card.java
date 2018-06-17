@@ -15,7 +15,11 @@ public class Card {
         if (rank > 13) {
             throw new NoSuchRankException();
         }
+        if(rank == 1){
+
+        }
         this.rank = rank;
         this.suit = suit;
     }
+
 }

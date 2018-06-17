@@ -19,23 +19,36 @@ public class Hand {
 
         public Card drawCard() {
             Card card = deck.drawCard();
+
         cardList.add(card);
         return card;
     }
+
+    private int prev_sum=0;
+    private int chk = 0;
+
     public int getCardSum() {
 
+        prev_sum= cardList.stream().mapToInt(card -> {
+            int sum;
+            if(card.getRank()==1){
+                chk++;
+            }
+            if(card.getRank()>10) {
+                System.out.println(card.getRank());
+                sum = 10;
 
-
-        return cardList.stream().mapToInt(card -> {
-                int sum;
-                if(card.getRank()>10) {
-                    sum = 10;
-                }else {
-                    sum = card.getRank();
-                }
-                return sum;
+            }else {
+                System.out.println(card.getRank());
+                sum = card.getRank();
+            }
+            return sum;
         }).sum();
-
+        if(chk!=0 && prev_sum<=11){
+            prev_sum +=10;
+            chk=0;
+        }
+        return prev_sum;
     }
 
     public void reset() {

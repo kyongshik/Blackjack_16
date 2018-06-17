@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static java.util.Collections.*;
+
 /**
  * Created by rokim on 2018. 5. 26..
  */
@@ -21,7 +23,7 @@ public class Deck {
         this.number = number;
         this.cardList = new ArrayList<Card>();
         createCards(number);
-        Collections.shuffle(cardList);
+        shuffle(cardList);
     }
 
     private void createCards(int number) {
