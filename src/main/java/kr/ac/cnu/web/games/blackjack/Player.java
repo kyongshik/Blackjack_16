@@ -35,6 +35,7 @@ public class Player {
         }
         if(bet > 10000){
             bet = 10000;
+
         }
         balance -= bet;
         currentBet = bet;
