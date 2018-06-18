@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static java.util.Collections.shuffle;
+
+import static java.util.Collections.*;
+
 
 /**
  * Created by rokim on 2018. 5. 26..

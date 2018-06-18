@@ -31,6 +31,11 @@ public class Player {
 
     public void placeBet(long bet) {
         if(balance < bet) {
+            bet = balance;
+        }
+        if(bet > 10000){
+            bet = 10000;
+
         }
         if(bet> 10000){
 
