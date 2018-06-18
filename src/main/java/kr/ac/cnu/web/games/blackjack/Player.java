@@ -37,9 +37,6 @@ public class Player {
             bet = 10000;
 
         }
-        if(bet> 10000){
-
-        }
         balance -= bet;
         currentBet = bet;
 
@@ -60,10 +57,6 @@ public class Player {
 //            currentBet=0;
                 this.isPlaying = false;
             }
-//        }
-//        else{
-//            Card card = hand.drawCard();
-//
 //        }
 
     }
