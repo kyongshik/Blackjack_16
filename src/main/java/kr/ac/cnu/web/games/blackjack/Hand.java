@@ -25,21 +25,21 @@ public class Hand {
     }
 
     private int prev_sum=0;
-    private int chk = 0;
-
+    int chk = 0;
     public int getCardSum() {
 
+        System.out.println("prev_sum"+prev_sum);
+        System.out.println("chk"+chk);
         prev_sum= cardList.stream().mapToInt(card -> {
             int sum;
+
             if(card.getRank()==1){
                 chk++;
             }
             if(card.getRank()>10) {
-                System.out.println(card.getRank());
                 sum = 10;
 
             }else {
-                System.out.println(card.getRank());
                 sum = card.getRank();
             }
             return sum;
@@ -48,7 +48,9 @@ public class Hand {
             prev_sum +=10;
             chk=0;
         }
+
         return prev_sum;
+
     }
 
     public void reset() {

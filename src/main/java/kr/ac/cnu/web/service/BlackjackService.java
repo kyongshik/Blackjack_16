@@ -67,4 +67,13 @@ public class BlackjackService {
         return gameRoom;
     }
 
+    public GameRoom doubledown(String roomId, User user) {
+        GameRoom gameRoom = gameRoomMap.get(roomId);
+
+        gameRoom.doubledown(user.getName());
+        gameRoom.playDealer();
+
+        return gameRoom;
+    }
+
 }
