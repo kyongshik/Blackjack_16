@@ -75,7 +75,17 @@ public class GameRoom {
         }
 
     }
+    public void doubledown(String name){
+        Player player = playerList.get(name);
+        Hand hand = player.getHand();
+        System.out.println("doubledown");
+        Card c = player.hitCard();
+        player.placeBet(player.getCurrentBet());
+        player.hitCard();
+        player.stand();
 
+
+    }
     public void stand(String name) {
         Player player = playerList.get(name);
         player.stand();

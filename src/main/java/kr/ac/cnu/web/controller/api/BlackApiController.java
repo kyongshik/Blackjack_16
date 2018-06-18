@@ -94,6 +94,13 @@ public class BlackApiController {
         return game;
     }
 
+    @PostMapping("/rooms/{roomId}/doubledown")
+    public GameRoom doubledown(@RequestHeader("name") String name, @PathVariable String roomId) {
+        User user = this.getUserFromSession(name);
+
+        return blackjackService.doubledown(roomId, user);
+    }
+
     @GetMapping("/rooms/{roomId}")
     public GameRoom getGameRoomData(@PathVariable String roomId) {
         return blackjackService.getGameRoom(roomId);
