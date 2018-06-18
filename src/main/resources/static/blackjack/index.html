@@ -699,18 +699,7 @@
         });
     })
 
-$('#stand').click(function() {
-        $.ajax({
-            type: 'POST',
-            url: 'http://localhost:8080/api/black-jack/rooms/' + gameRoomId + '/stand',
-            headers: {
-                'name':user.name,
-            },
-        }).done(function(data) {        //게임에 대한 전반적이 정보를 다 가져온다.
-            drawGameRoom(data);
-            setRanking();
-        });
-    })
+
 
 var i=0;
     $('#more').click(function(){
@@ -800,7 +789,7 @@ var i=0;
         $('#money').html(gameRoom.playerList[user.name].balance);   //player의 모든 금액
         $('#user-name-id').html('');
         $('#user-name-id').html('<strong>' + user.name+'    '+gameRoom.playerList[user.name].balance+'</strong>');
-
+        setRanking();
     }
 
     function generateCardDiv(rank, suit) {
