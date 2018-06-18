@@ -21,6 +21,7 @@ public class Dealer {
     }
 
     public void deal() {
+        System.out.println("deal_dealer");
         hand.drawCard();
     }
 
