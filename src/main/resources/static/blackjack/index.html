@@ -437,8 +437,10 @@
 </head>
 <body>
 <div class="player-Ranking" id="Ranking"></div>
+
 <div class="user-name" id="user-name-id"></div>
 <div class="page" id="login">
+    <h1>Blackjack</h1>
     <div>
         <input type="text" id="input_login_name" />
         <div class="buttons"><div class="btn" id="login_button">Login</div></div>
@@ -451,10 +453,11 @@
     </div>
 </div>
 <div class="page" id="game" style="display: none">
+    <h1>Blackjack</h1>
     <div class="dealer-cards"></div>
     <div class="clear"></div>
     <div class="player-cards"></div>
-    <div class="buttons"><div class="btn" id="hit">Hit</div><div class="btn" id="stand">Stand</div></div>
+    <div class="buttons"><div class="btn" id="hit">Hit</div><div class="btn" id="stand">Stand</div><div class="btn" id="doubledown">DoubleDown</div></div>
     <div class="buttons"><div class="btn" id="deal">Deal</div></div>
     <div class="betting-area">
         <b>Your Bet</b><br>
@@ -559,6 +562,7 @@
 
     $('#deal').click(function() {
         var bet = parseInt($('#bet').html());
+        $('#doubledown').show();
         $.ajax({
             type: 'POST',
             url: 'http://localhost:8080/api/black-jack/rooms/' + gameRoomId + '/bet',
@@ -574,6 +578,7 @@
     })
 
     $('#hit').click(function() {
+    $('#doubledown').hide();
         $.ajax({
             type: 'POST',
             url: 'http://localhost:8080/api/black-jack/rooms/' + gameRoomId + '/hit',
@@ -604,7 +609,41 @@
         });
     })
 
+    $('#doubledown').click(function() {
+
+        $.ajax({
+            type: 'POST',
+            url: 'http://localhost:8080/api/black-jack/rooms/' + gameRoomId + '/doubledown',
+            headers: {
+                'name': user.name
+            },
+        }).done(function(data) {
+
+            console.log(data.playerList[user.name].hand.cardList.length);
+            if(data.playerList[user.name].hand.cardSum > 21){
+                console.log(data.playerList[user.name].hand.cardSum);
+                    $.ajax({
+                        type: 'POST',
+                        url: 'http://localhost:8080/api/black-jack/rooms/' + gameRoomId + '/stand',
+                        headers: {
+                            'name':user.name
+                        },
+                    }).done(function(data) {
+                        drawGameRoom(data);
+                    });
+            }else {
+                drawGameRoom(data);
+            }
+
+
+            drawGameRoom(data); //카드 한장 뽑았으니 화면을 갱신해준다.
+
+
+        });
+    })
+
     $('#stand').click(function() {
+    $('#doubledown').hide();
         $.ajax({
             type: 'POST',
             url: 'http://localhost:8080/api/black-jack/rooms/' + gameRoomId + '/stand',
@@ -629,6 +668,7 @@ $('#stand').click(function() {
             setRanking();
         });
     })
+
 var i=0;
     $('#more').click(function(){
         var bet = 1000;
@@ -646,8 +686,6 @@ var i=0;
                 $('#money').html(money - 10000);
                  i=i+1;
             }
-
-
         }
         else{
 
@@ -675,15 +713,19 @@ var i=0;
             $('#less').show();
             $('#hit').hide();
             $('#stand').hide();
+            $('#doubledown').hide();
         } else {
             $('#deal').hide();
             $('#more').hide();
             $('#less').hide();
             $('#hit').show();
             $('#stand').show();
+
         }
 
         $('.dealer-cards').html("");
+
+
 
         gameRoom.dealer.hand.cardList.forEach(function(card) {  //create에서 cardlist에 card가 없어서 호출이 안 된다. deal한 다음은 가능하다.
             $('.dealer-cards').append(generateCardDiv(card.rank, card.suit));   //dealer위치에 카드하나 배치한다.

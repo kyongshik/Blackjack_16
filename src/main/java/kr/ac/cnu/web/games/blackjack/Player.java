@@ -32,23 +32,33 @@ public class Player {
     public void placeBet(long bet) {
         if(balance < bet) {
         }
+        if(bet> 10000){
+
+        }
         balance -= bet;
         currentBet = bet;
 
         isPlaying = true;
     }
-
+    int chk=0;
     public void deal() {//맨처음
-        Card first = hand.drawCard();
-        Card second = hand.drawCard();
-        if(first.getRank() + second.getRank() ==21){ //blackjack이면 1.5배를 돌려받아야함
-            balance  += getCurrentBet()*1.5;
-            this.isPlaying=false;
-        }
-        if(first.getRank()+second.getRank() > 21){
+//        if(chk==0) {
+            Card first = hand.drawCard();
+            Card second = hand.drawCard();
+            chk++;
+            if (first.getRank() + second.getRank() == 21) { //blackjack이면 1.5배를 돌려받아야함
+                balance += getCurrentBet() * 1.5;
+                this.isPlaying = false;
+            }
+            if (first.getRank() + second.getRank() > 21) {
 //            currentBet=0;
-            this.isPlaying=false;
-        }
+                this.isPlaying = false;
+            }
+//        }
+//        else{
+//            Card card = hand.drawCard();
+//
+//        }
 
     }
 
