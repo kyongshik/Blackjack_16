@@ -47,6 +47,7 @@ public class Player {
     }
     int chk=0;
     public void deal() {//맨처음
+        System.out.println("deal_Player");
 //        if(chk==0) {
             Card first = hand.drawCard();
             Card second = hand.drawCard();
