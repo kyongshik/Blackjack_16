@@ -52,6 +52,7 @@ public class Deck {
             }
         createCards(1);
         }
+        shuffle(cardList);
        return cardList.remove(0);
     }
 
